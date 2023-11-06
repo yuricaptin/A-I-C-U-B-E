@@ -120,7 +120,12 @@ func doMoves():
 	var file = FileAccess.open("res://actions.txt",FileAccess.READ)
 	var text=file.get_as_text()
 	var moves=[]
-	for char in text:
-		moves.append(char)
+	for char in range(text.length()):
+		if text[char]=="'":
+			var mv=moves[-1]
+			moves[-1]=mv+text[char]
+			
+		else:
+			moves.append(text[char])
 	RubicsCube.moves=moves
 	
