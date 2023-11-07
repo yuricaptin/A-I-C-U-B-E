@@ -111,6 +111,17 @@ func randomizeRubiks():
 	randomMoves.shuffle()
 	randomMoves.resize(randomizationTurns)
 	RubicsCube.moves = randomMoves
+	
+	var path = "res://Data_Files//randomActions.txt"
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+	
+	var pew = FileAccess.open(path, FileAccess.WRITE)
+	var string = ""
+	for move in randomMoves:
+		pew.store_string(move)
+	pew.close()
+		
 	if %HideBeforeRandomize.button_pressed:
 		RubicsCube.toggoleVisibilityForXTurns(false,randomizationTurns)
 	speed = 4
