@@ -1,19 +1,16 @@
 class ColoredSquares:
-    def __init__(self, position:(), color, isOnCorrectSide=True):
-        self.position=position
+    def __init__(self, color, isOnCorrectSide=True):
         self.isOnCorrectSide=isOnCorrectSide
         self.color=color
 
 class Block:
-    def __init__(self,coloredSquares:[],sides:[]):
+    def __init__(self,coloredSquares:[],global_position:(),type):
         self.coloredSquares=coloredSquares
-        self.sides=sides
-        if  len(coloredSquares)==1:
-            self.type="center"
-        elif len(coloredSquares)==2:
-            self.type="edge"
-        elif len(coloredSquares)==3:
-            self.type="corner"
+        self.gp=global_position
+        self.current_position=[x for x in global_position]
+        self.rotation = [0,0,0]
+        self.type=type
+        self.has_moved=False
 
 class Cube:
     F="Front"
@@ -29,61 +26,36 @@ class Cube:
             D:"YELLOW",
             B:"BLUE"}
     #need to finish
-    SOLVED_FACES={F:[Block([ColoredSquares((L,0,2),COLORS.get(L)),ColoredSquares((U,2,0),COLORS.get(U)),ColoredSquares((F,0,0),COLORS.get(F))],sides=[L,U,F]),
-              Block([ColoredSquares((U,2,1),COLORS.get(U)),ColoredSquares((F,0,1),COLORS.get(F))],sides=[U,F]),
-              Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[L,U,R]),
-              Block([ColoredSquares((L,1,2),COLORS.get(L)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])],
-           R:[Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[F,U,R]),
-              Block([ColoredSquares((U,1,2),COLORS.get(U)),ColoredSquares((R,0,1),COLORS.get(R))],sides=[U,R]),
-              Block([ColoredSquares((R,0,2),COLORS.get(R)),ColoredSquares((U,0,2),COLORS.get(U)),ColoredSquares((B,0,0),COLORS.get(B))],sides=[R,U,B]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])],
-           L:[Block([ColoredSquares((L,0,2),COLORS.get(L)),ColoredSquares((U,2,0),COLORS.get(U)),ColoredSquares((F,0,0),COLORS.get(F))],sides=[L,U,F]),
-              Block([ColoredSquares((U,2,1),COLORS.get(U)),ColoredSquares((F,0,1),COLORS.get(F))],sides=[U,F]),
-              Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[L,U,R]),
-              Block([ColoredSquares((L,1,2),COLORS.get(L)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])],
-           U:[Block([ColoredSquares((L,0,2),COLORS.get(L)),ColoredSquares((U,2,0),COLORS.get(U)),ColoredSquares((F,0,0),COLORS.get(F))],sides=[L,U,F]),
-              Block([ColoredSquares((U,2,1),COLORS.get(U)),ColoredSquares((F,0,1),COLORS.get(F))],sides=[U,F]),
-              Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[L,U,R]),
-              Block([ColoredSquares((L,1,2),COLORS.get(L)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])],
-           D:[Block([ColoredSquares((L,0,2),COLORS.get(L)),ColoredSquares((U,2,0),COLORS.get(U)),ColoredSquares((F,0,0),COLORS.get(F))],sides=[L,U,F]),
-              Block([ColoredSquares((U,2,1),COLORS.get(U)),ColoredSquares((F,0,1),COLORS.get(F))],sides=[U,F]),
-              Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[L,U,R]),
-              Block([ColoredSquares((L,1,2),COLORS.get(L)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])],
-           B:[Block([ColoredSquares((L,0,2),COLORS.get(L)),ColoredSquares((U,2,0),COLORS.get(U)),ColoredSquares((F,0,0),COLORS.get(F))],sides=[L,U,F]),
-              Block([ColoredSquares((U,2,1),COLORS.get(U)),ColoredSquares((F,0,1),COLORS.get(F))],sides=[U,F]),
-              Block([ColoredSquares((F,0,2),COLORS.get(F)),ColoredSquares((U,2,2),COLORS.get(U)),ColoredSquares((R,0,0),COLORS.get(R))],sides=[L,U,R]),
-              Block([ColoredSquares((L,1,2),COLORS.get(L)),ColoredSquares((F,1,0),COLORS.get(F))],sides=[L,F]),
-              Block([ColoredSquares((F,1,1),COLORS.get(F))],sides=[F]),
-              Block([ColoredSquares((F,1,2),COLORS.get(F)),ColoredSquares((R,1,0),COLORS.get(R))],sides=[F,R]),
-              Block([ColoredSquares((L,2,2),COLORS.get(L)),ColoredSquares((D,0,0),COLORS.get(D)),ColoredSquares((F,2,0),COLORS.get(F))],sides=[L,D,F]),
-              Block([ColoredSquares((F,2,1),COLORS.get(F)),ColoredSquares((D,0,1),COLORS.get(D))],sides=[F,D]),
-              Block([ColoredSquares((F,2,2),COLORS.get(F)),ColoredSquares((D,0,2),COLORS.get(D)),ColoredSquares((R,2,0),COLORS.get(R))],sides=[F,D,R])]}
+    FACE_POSITION={F:0, L:1, R:2, U:3, D:4, B:5}
+    CORNER_BLOCKS=[Block([ColoredSquares(COLORS.get(F)),ColoredSquares(COLORS.get(L)),0,ColoredSquares(COLORS.get(U)),0,0],(-1,1,1),"corner"),Block([ColoredSquares(COLORS.get(F)),0,ColoredSquares(COLORS.get(R)),ColoredSquares(COLORS.get(U)),0,0],(1,1,1),"corner"),
+                    Block([ColoredSquares(COLORS.get(F)),ColoredSquares(COLORS.get(L)),0,0,ColoredSquares(COLORS.get(D)),0],(-1,-1,1),"corner"),Block([ColoredSquares(COLORS.get(F)),0,ColoredSquares(COLORS.get(R)),0,ColoredSquares(COLORS.get(D)),0],(1,-1,1),"corner"),
+                    
+                    Block([0,ColoredSquares(COLORS.get(L)),0,ColoredSquares(COLORS.get(U)),0,ColoredSquares(COLORS.get(B))],(-1,1,-1),"corner"),Block([0,0,ColoredSquares(COLORS.get(R)),ColoredSquares(COLORS.get(U)),0,ColoredSquares(COLORS.get(B))],(1,1,-1),"corner"),
+                    Block([0,ColoredSquares(COLORS.get(L)),0,0,ColoredSquares(COLORS.get(D)),ColoredSquares(COLORS.get(B))],(-1,-1,-1),"corner"),Block([0,0,ColoredSquares(COLORS.get(R)),0,ColoredSquares(COLORS.get(D)),ColoredSquares(COLORS.get(B))],(1,-1,-1),"corner")
+                    ]
+    EDGE_BLOCKS=[Block([ColoredSquares(COLORS.get(F)),0,0,ColoredSquares(COLORS.get(U)),0,0],(0,1,1),"edge"),Block([ColoredSquares(COLORS.get(F)),ColoredSquares(COLORS.get(L)),0,0,0,0],(-1,0,1),"edge"),
+                 Block([ColoredSquares(COLORS.get(F)),0,ColoredSquares(COLORS.get(R)),0,0,0],(1,0,1),"edge"),Block([ColoredSquares(COLORS.get(F)),0,0,0,ColoredSquares(COLORS.get(D)),0],(0,-1,1),"edge"),
+                 
+                 Block([0,0,0,ColoredSquares(COLORS.get(U)),0,ColoredSquares(COLORS.get(B))],(0,1,-1),"edge"),Block([0,ColoredSquares(COLORS.get(L)),0,0,0,ColoredSquares(COLORS.get(B))],(-1,0,-1),"edge"),
+                 Block([0,0,ColoredSquares(COLORS.get(R)),0,0,ColoredSquares(COLORS.get(B))],(1,0,-1),"edge"),Block([0,0,0,0,ColoredSquares(COLORS.get(D)),ColoredSquares(COLORS.get(B))],(0,-1,-1),"edge"),
+                 
+                 Block([0,ColoredSquares(COLORS.get(L)),0,ColoredSquares(COLORS.get(U)),0,0],(-1,1,0),"edge"),Block([0,ColoredSquares(COLORS.get(L)),0,0,ColoredSquares(COLORS.get(D)),0],(-1,-1,0),"edge"),
+                 Block([0,0,ColoredSquares(COLORS.get(R)),ColoredSquares(COLORS.get(U)),0,0],(1,1,0),"edge"),Block([0,0,ColoredSquares(COLORS.get(R)),0,ColoredSquares(COLORS.get(D)),0],(1,-1,0),"edge")
+                 ]
+    CENTER_BLOCKS=[Block([ColoredSquares(COLORS.get(F)),0,0,0,0,0],(0,0,1),"center"),Block([0,ColoredSquares(COLORS.get(L)),0,0,0,0],(-1,0,0),"center"),Block([0,0,ColoredSquares(COLORS.get(R)),0,0,0],(1,0,0),"center"),
+                   Block([0,0,0,ColoredSquares(COLORS.get(U)),0,0],(0,1,0),"center"),Block([0,0,0,0,ColoredSquares(COLORS.get(D)),0],(0,-1,0),"center"),Block([0,0,0,0,0,ColoredSquares(COLORS.get(B))],(0,0,-1),"center")]
     
+    
+    def __init__(self,scramble=None):
+
+        self.START_STATE=self.CORNER_BLOCKS+self.EDGE_BLOCKS+self.CENTER_BLOCKS
+        self.GOAL_STATE=self.START_STATE
+        self.CURRENT_STATE=self.START_STATE
+        
+        if scramble != None:
+            #scramble cube
+        else:
+            #scramble cube according to insctructions
 
 class Turns:
     CLOCKWISE_FRONT="F"
@@ -125,6 +97,20 @@ class Actions:
     Turns.COUNTER_CLOCKWISE_DOWN,
     Turns.COUNTER_CLOCKWISE_LEFT]
 
+    ACTIONS_DICT={Turns.CLOCKWISE_FRONT:(0,0,90),
+                  Turns.CLOCKWISE_RIGHT:(90,0,0),
+                  Turns.CLOCKWISE_BACK:(0,0,-90),
+                  Turns.CLOCKWISE_UP:(0,90,0),
+                  Turns.CLOCKWISE_DOWN:(0,90,0),
+                  Turns.CLOCKWISE_LEFT:(-90,0,0),
+                  Turns.COUNTER_CLOCKWISE_FRONT:(0,0,-90),
+                  Turns.COUNTER_CLOCKWISE_RIGHT:(-90,0,0),
+                  Turns.COUNTER_CLOCKWISE_BACK:(0,0,90),
+                  Turns.COUNTER_CLOCKWISE_UP:(0,-90,0),
+                  Turns.COUNTER_CLOCKWISE_DOWN:(0,-90,0),
+                  Turns.COUNTER_CLOCKWISE_LEFT:(90,0,0)
+                }
+
     def getPossibleMoves(self,gamestate):
         poss_Moves=self.ACTIONS
         lastmove=gamestate.MoveList[-1]
@@ -154,8 +140,101 @@ class Actions:
             poss_Moves.remove(Turns.CLOCKWISE_LEFT)
         return poss_Moves
     
-    def getSuccessorStates(self,gamestate):
+    def getSuccessorStates(self,cube:Cube, actions)->[]:
         #compute actions on cube
         #return each new cube state
+    def actOnCube(self, cube:Cube, action)->[]:
+        #return new state
+        box=cube
+        if action==Turns.CLOCKWISE_FRONT:
+            affected_faces=Turns.AFFECTED_FACES.get(Turns.CLOCKWISE_FRONT)
+            for face in affected_faces:
+               #update position and rotation
+               ind=Cube.FACE_POSITION.get(face)
+               for block in box.CURRENT_STATE:
+                   if block.coloredSquares[ind]!=0 and block.has_moved==False:
+                        block_pos_x=block.current_position[0]
+                        block_pos_y=block.current_position[1]
+                        block_pos_z=block.current_position[2]
+                        if block.type=="corner":
+                            if block_pos_x == block_pos_y:
+                                block.current_position[1]=-block_pos_y
+                                block.rotation[0]=block.rotation[0]+self.ACTIONS_DICT.get(action)[0]
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                            else:
+                                block.current_position[0]=-block_pos_x
+                                block.rotation[0]=block.rotation[0]+self.ACTIONS_DICT.get(action)[0]
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                        elif block.type=="edge":
+                            if block_pos_x!=0:
+                                block.current_position[0]=0
+                                block.current_position[1]=-block_pos_x
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                            else:
+                                block.current_position[1]=0
+                                block.current_position[0]=block_pos_y
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                        for square in block.coloredSquares:
+                            if square !=0:
+                                if box.CURRENT_STATE==box.GOAL_STATE:
+                                    square.isOnCorrectSide=True
+                                else:
+                                    square.isOnCorrectSide=False
+                        block.has_moved=True
+            for block in box.CURRENT_STATE:
+                block.has_moved=False
+        elif action==Turns.COUNTER_CLOCKWISE_FRONT:
+            affected_faces=Turns.AFFECTED_FACES.get(Turns.CLOCKWISE_FRONT)
+            for face in affected_faces:
+               #update position and rotation
+               ind=Cube.FACE_POSITION.get(face)
+               for block in box.CURRENT_STATE:
+                   if block.coloredSquares[ind]!=0 and block.has_moved==False:
+                        block_pos_x=block.current_position[0]
+                        block_pos_y=block.current_position[1]
+                        block_pos_z=block.current_position[2]
+                        if block.type=="corner":
+                            if block_pos_x != block_pos_y:
+                                block.current_position[1]=-block_pos_y
+                                block.rotation[0]=block.rotation[0]+self.ACTIONS_DICT.get(action)[0]
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                            else:
+                                block.current_position[0]=-block_pos_x
+                                block.rotation[0]=block.rotation[0]+self.ACTIONS_DICT.get(action)[0]
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                        elif block.type=="edge":
+                            if block_pos_x!=0:
+                                block.current_position[0]=0
+                                block.current_position[1]=block_pos_x
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                            else:
+                                block.current_position[1]=0
+                                block.current_position[0]=-block_pos_y
+                                block.rotation[1]=block.rotation[1]+self.ACTIONS_DICT.get(action)[1]
+                                block.rotation[2]=block.rotation[2]+self.ACTIONS_DICT.get(action)[2]
+                        for square in block.coloredSquares:
+                            if square !=0:
+                                if box.CURRENT_STATE==box.GOAL_STATE:
+                                    square.isOnCorrectSide=True
+                                else:
+                                    square.isOnCorrectSide=False
+                        block.has_moved=True
+            for block in box.CURRENT_STATE:
+                block.has_moved=False
+            
+
+
+
+
+
+
+                    
 class Cubing:
     #manages gamestate
