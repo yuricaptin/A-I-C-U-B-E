@@ -1,11 +1,14 @@
+import random
+import fileinput
 class ColoredSquares:
     def __init__(self, color, isOnCorrectSide=True):
         self.isOnCorrectSide=isOnCorrectSide
+        self.isInCorrectPosition=True
         self.color=color
         self.hasMoved=False
     def __str__(self):
-        text="Color: {0}. isOnCorrectSide: {1}."
-        return text.format(self.color,self.isOnCorrectSide)
+        text="Color: {0}. CorrectSide/Position: {1}/{2}. "
+        return text.format(self.color[0],self.isOnCorrectSide,self.isInCorrectPosition)
 
 class Block:
     def __init__(self,coloredSquares:[],global_position:(),type):
@@ -67,19 +70,33 @@ class Cube:
         self.CURRENT_STATE=self.START_STATE
         self.MOVE_LIST=[]
         
-        #if scramble != None:
-            #scramble cube
-            #g3t from file
-        #else:
-            #scramble cube according to insctructions
-    def isTerminal(self):
+        if scramble != None:
+            action=Actions()
+            if isinstance(scramble,int)==True:
+                #if given int randomly sramble
+                for i in range(scramble):
+                    act=Actions.ACTIONS[random.randint(0,len(Actions.ACTIONS)-1)]
+                    ns=action.actOnCube(self,act)
+                    self.CURRENT_STATE=ns
+                    self.MOVE_LIST.append(act)
+            elif isinstance(scramble,list)==True:
+                for act in scramble:
+                    ns=action.actOnCube(self,act)
+                    self.CURRENT_STATE=ns
+                    self.MOVE_LIST.append(act)
+            elif isinstance(scramble,str):
+               for line in fileinput.input(files=scramble):
+                   for act in line:
+                       ns=action.actOnCube(self,act)
+                       self.CURRENT_STATE=ns
+                       self.MOVE_LIST.append(act)
+
+    def isInTerminalState(self)->bool:
         for block in self.CURRENT_STATE:
-            for i in range(len(block.current_position)):
-                if block.current_position[i]!=block.gp[i]:
-                    return False
-            for i in range(len(block.rotation)):
-                if block.rotation[i]!=0:
-                    return False
+            for square in block.coloredSquares:
+                if square!=0:
+                    if square.isInCorrectPosition!=True:
+                        return False
         return True
     
     def getDEBUGState(self):
@@ -112,6 +129,7 @@ class Cube:
                         if val==i:
                             side=key
                     rt=side+str(block.current_position)
+                    #print(rt)
                     template=template.replace(rt,block.coloredSquares[i].color[0])
         return template
 
@@ -370,6 +388,14 @@ class Actions:
         #zero out colored squares
         for square in block.coloredSquares:
             if square!=0:
+                #check if squares are in the right position
+                if block.current_position==list(block.gp) and block.rotation==[0,0,0,0,0,0]:
+                    square.isInCorrectPosition=True
+                    square.isOnCorrectSide=True
+                else:
+                    square.isInCorrectPosition=False
+                    if square.hasMoved==True:
+                        square.isOnCorrectSide=False
                 square.hasMoved=False
         return rotation,squares
 
@@ -716,94 +742,94 @@ class Actions:
                                 block.rotation,block.coloredSquares=self.updateRoatation(block, action)
         elif action == Turns.CLOCKWISE_DOWN:
             for block in box.CURRENT_STATE:
-                #every block on the up face
+                #every block on the down face
                 block_pos_x=block.current_position[0]
                 block_pos_y=block.current_position[1]
                 block_pos_z=block.current_position[2]
                 if block_pos_y==-1:
-                    #front/up
+                    #front/down
                     if block_pos_z==1:
                         if block.type=="corner":
                             block.current_position[0]=-1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=block_pos_x
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                         elif block.type=="edge":
                             block.current_position[0]=-1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=0
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
-                    #back/up
+                    #back/down
                     elif block_pos_z==-1:
                         if block.type=="corner":
                             block.current_position[0]=1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=block_pos_x
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                         elif block.type=="edge":
                             block.current_position[0]=1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=0
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                     elif block_pos_z==0:
-                        #right/up
+                        #right/down
                         if block_pos_x==1:
                             if block.type=="edge":
                                 block.current_position[0]=0
-                                block.current_position[1]=1
+                                block.current_position[1]=-1
                                 block.current_position[2]=1
                                 block.rotation,block.coloredSquares=self.updateRoatation(block, action)
-                        #left/up
+                        #left/down
                         elif block_pos_x==-1:
                             if block.type=="edge":
                                 block.current_position[0]=0
-                                block.current_position[1]=1
+                                block.current_position[1]=-1
                                 block.current_position[2]=-1
                                 block.rotation,block.coloredSquares=self.updateRoatation(block, action)
         elif action==Turns.COUNTER_CLOCKWISE_DOWN:
              for block in box.CURRENT_STATE:
-                #every block on the up face
+                #every block on the down face
                 block_pos_x=block.current_position[0]
                 block_pos_y=block.current_position[1]
                 block_pos_z=block.current_position[2]
                 if block_pos_y==-1:
-                    #front/up
+                    #front/down
                     if block_pos_z==1:
                         if block.type=="corner":
                             block.current_position[0]=1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=-block_pos_x
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                         elif block.type=="edge":
                             block.current_position[0]=1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=0
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
-                    #back/up
+                    #back/down
                     elif block_pos_z==-1:
                         if block.type=="corner":
                             block.current_position[0]=-1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=-block_pos_x
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                         elif block.type=="edge":
                             block.current_position[0]=-1
-                            block.current_position[1]=1
+                            block.current_position[1]=-1
                             block.current_position[2]=0
                             block.rotation,block.coloredSquares=self.updateRoatation(block, action)
                     elif block_pos_z==0:
-                        #right/up
+                        #right/down
                         if block_pos_x==1:
                             if block.type=="edge":
                                 block.current_position[0]=0
-                                block.current_position[1]=1
+                                block.current_position[1]=-1
                                 block.current_position[2]=-1
                                 block.rotation,block.coloredSquares=self.updateRoatation(block, action)
-                        #left/up
+                        #left/down
                         elif block_pos_x==-1:
                             if block.type=="edge":
                                 block.current_position[0]=0
-                                block.current_position[1]=1
+                                block.current_position[1]=-1
                                 block.current_position[2]=1
                                 block.rotation,block.coloredSquares=self.updateRoatation(block, action)
         return box.CURRENT_STATE
@@ -816,7 +842,7 @@ class Actions:
             return states
 
 #testing stuff
-#rc=Cube()
+#rc=Cube(["D"])
 #action=Actions()
 #ns=action.actOnCube(rc,"U'")
 #rc.CURRENT_STATE=ns
@@ -828,10 +854,14 @@ class Actions:
 #ns=action.actOnCube(rc,"F")
 #rc.CURRENT_STATE=ns
 #print(rc.getDEBUGState())
-
-
+#print("\n"+rc.getDEBUGCube())
+#print(rc.MOVE_LIST)
+#print("\n"+str(rc.isInTerminalState()))   
 #print(rc.getDEBUGCube())
-
-                    
+#ns=action.actOnCube(rc,"U'")
+#rc.CURRENT_STATE=ns
+#print(rc.getDEBUGState())
+#print("\n"+rc.getDEBUGCube())
+#print("\n"+str(rc.isInTerminalState()))            
 #class Cubing:
   #  #manages gamestate
