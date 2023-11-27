@@ -53,15 +53,15 @@ def CheckGS(actionlist,gs):
 
 
 
-test=c.Cube(["L"])
+# test=c.Cube(["L"])
 
-#print(a)
-print("Before DFS\n")
-print(test.MOVE_LIST)
-print(test.getDEBUGCube())
-print("During DFS")
-a=dfs(test,test.GOAL_STATE)
-print(str(a))
-test=c.Cube(a)
-print("\nPost DFS\n")
-print(test.getDEBUGCube())
+# #print(a)
+# print("Before DFS\n")
+# print(test.MOVE_LIST)
+# print(test.getDEBUGCube())
+# print("During DFS")
+# a=dfs(test,test.GOAL_STATE)
+# print(str(a))
+# test=c.Cube(a)
+# print("\nPost DFS\n")
+# print(test.getDEBUGCube())
