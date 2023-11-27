@@ -1,12 +1,12 @@
-#DFS
+#BFS
 import Cubing as c
 actor=c.Actions()
-def dfs(cube:c.Cube,goalstate):
+def bfs(cube:c.Cube,goalstate):
    
     closed=set()
     fringe=[]
     actions=[]
-    fringe.insert(0,(meaningfulState(cube.START_STATE),cube.MOVE_LIST+[],0))
+    fringe.append((meaningfulState(cube.START_STATE),cube.MOVE_LIST+[],0))
     #print(meaningfulState(cube.START_STATE))
     while(True):
         
@@ -14,7 +14,7 @@ def dfs(cube:c.Cube,goalstate):
             print("Failure")
             return False
         node,actions,cost=fringe.pop(0)
-        print(actions)
+        #print(actions)
         if CheckGS(actions,goalstate)==True:
             return actions
         
@@ -22,7 +22,7 @@ def dfs(cube:c.Cube,goalstate):
             closed.add(str(node))
             
             for state in getSuccessors(node,actions):
-                fringe.insert(0,(state[0],actions+[state[1]],state[2]))
+                fringe.append((state[0],actions+[state[1]],state[2]))
                 #print(fringe)
     return actions
   
@@ -53,15 +53,15 @@ def CheckGS(actionlist,gs):
 
 
 
-# test=c.Cube(["L"])
+# test=c.Cube(1)
 
 # #print(a)
-# print("Before DFS\n")
+# print("Before BFS\n")
 # print(test.MOVE_LIST)
 # print(test.getDEBUGCube())
-# print("During DFS")
-# a=dfs(test,test.GOAL_STATE)
+# print("During BFS")
+# a=bfs(test,test.GOAL_STATE)
 # print(str(a))
 # test=c.Cube(a)
-# print("\nPost DFS\n")
+# print("\nPost BFS\n")
 # print(test.getDEBUGCube())
