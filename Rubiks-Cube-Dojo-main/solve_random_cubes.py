@@ -19,7 +19,7 @@ def random_cube():
     #scramble_moves
     #test
     with open("AskPython.txt") as f:
-        scram = f.read("C:\Users\Nored\source\repos\yuricaptin\A-I-C-U-B-E\Rubiks-Cube-Dojo-main\Data_Files\randomActions.txt")
+        scram = f.read("Data_Files/randomMoves.txt")
     a = Cube(SOLVED_CUBE_STR)
     a.sequence(scramble_moves)
     return a
