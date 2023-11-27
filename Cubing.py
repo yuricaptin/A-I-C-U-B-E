@@ -1,5 +1,6 @@
 import random
 import fileinput
+import copy
 class ColoredSquares:
     def __init__(self, color, isOnCorrectSide=True):
         self.isOnCorrectSide=isOnCorrectSide
@@ -65,9 +66,9 @@ class Cube:
     
     def __init__(self,scramble=None):
 
-        self.START_STATE=self.CORNER_BLOCKS+self.EDGE_BLOCKS+self.CENTER_BLOCKS
-        self.GOAL_STATE=self.START_STATE
-        self.CURRENT_STATE=self.START_STATE
+        self.START_STATE=copy.deepcopy(self.CORNER_BLOCKS)+copy.deepcopy(self.EDGE_BLOCKS)+copy.deepcopy(self.CENTER_BLOCKS)
+        self.GOAL_STATE=copy.deepcopy(self.START_STATE)
+        self.CURRENT_STATE=copy.deepcopy(self.START_STATE)
         self.MOVE_LIST=[]
         
         if scramble != None:
@@ -189,7 +190,7 @@ class Actions:
                 }
 
     def getPossibleMoves(self,cube:Cube):
-        poss_Moves=self.ACTIONS
+        poss_Moves=copy.deepcopy(self.ACTIONS)
         lastmove=cube.MOVE_LIST[-1]
         if lastmove==Turns.CLOCKWISE_FRONT:
             poss_Moves.remove(Turns.COUNTER_CLOCKWISE_FRONT)
@@ -218,7 +219,7 @@ class Actions:
         return poss_Moves
     
     def updateRoatation(self, block:Block, action):
-        rotation=block.rotation
+        rotation=copy.deepcopy(block.rotation)
      
         rotation[0]+=Actions.ACTIONS_DICT.get(action)[0]
         rotation[1]+=Actions.ACTIONS_DICT.get(action)[1]
@@ -403,7 +404,7 @@ class Actions:
         #return each new cube state
     def actOnCube(self, cube:Cube, action)->[]:
         #return new state
-        box=cube
+        box=copy.deepcopy(cube)
         if action==Turns.CLOCKWISE_FRONT:
             for block in box.CURRENT_STATE:
                 #every block on the front face
