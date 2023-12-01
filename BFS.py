@@ -53,15 +53,15 @@ def CheckGS(actionlist,gs):
 
 
 
-# test=c.Cube(1)
+test=c.Cube(1)
 
-# #print(a)
-# print("Before BFS\n")
-# print(test.MOVE_LIST)
-# print(test.getDEBUGCube())
-# print("During BFS")
-# a=bfs(test,test.GOAL_STATE)
-# print(str(a))
-# test=c.Cube(a)
-# print("\nPost BFS\n")
-# print(test.getDEBUGCube())
+#print(a)
+print("Before BFS\n")
+print(test.MOVE_LIST)
+print(test.getDEBUGCube())
+print("During BFS")
+a=bfs(test,test.GOAL_STATE)
+print(str(a))
+test=c.Cube(a)
+print("\nPost BFS\n")
+print(test.getDEBUGCube())
