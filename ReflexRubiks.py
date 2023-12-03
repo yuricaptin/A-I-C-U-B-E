@@ -110,15 +110,15 @@ def CheckGS(actionlist,gs):
     else:
         return False
     
-test=c.Cube(3)
+# test=c.Cube(3)
 
-#print(a)
-print("Before Reflex Sol\n")
-print(test.MOVE_LIST)
-print(test.getDEBUGCube())
-print("During Reflex Sol")
-a=REFLEX_SOL(test,test.GOAL_STATE)
-print(str(a))
-test=c.Cube(a)
-print("\nPost Reflex Sol\n")
-print(test.getDEBUGCube())
+# #print(a)
+# print("Before Reflex Sol\n")
+# print(test.MOVE_LIST)
+# print(test.getDEBUGCube())
+# print("During Reflex Sol")
+# a=REFLEX_SOL(test,test.GOAL_STATE)
+# print(str(a))
+# test=c.Cube(a)
+# print("\nPost Reflex Sol\n")
+# print(test.getDEBUGCube())
