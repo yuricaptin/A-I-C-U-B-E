@@ -53,7 +53,7 @@ def CheckGS(actionlist,gs):
 
 
 
-# test=c.Cube(1)
+# test=c.Cube(3)
 
 # #print(a)
 # print("Before BFS\n")
